@@ -14,9 +14,10 @@ import {IAxelarGasService} from "@axelar-network/axelar-gmp-sdk-solidity/contrac
  */
 error InvalidAmount();
 
-contract UmeeAxelarToken is ERC20, AxelarExecutable, ReentrancyGuard {
+contract UmeeAxelarToken is ERC20Permit, AxelarExecutable, ReentrancyGuard {
     IAxelarGasService public immutable gasReceiver;
 
+    address public deadAddress = 0x000000000000000000000000000000000000dEaD;
     address public gravityBridgeUmee;
     uint256 public tokensSwapped = 0;
 
@@ -49,7 +50,7 @@ contract UmeeAxelarToken is ERC20, AxelarExecutable, ReentrancyGuard {
     function swapGB(uint256 amount) public nonReentrant {
         if (amount == 0) revert InvalidAmount();
 
-        ERC20(gravityBridgeUmee).transferFrom(msg.sender, address(0), amount);
+        ERC20(gravityBridgeUmee).transferFrom(msg.sender, deadAddress, amount);
 
         tokensSwapped += amount;
 

@@ -6,6 +6,7 @@
   },
   "dependencies": {
     "@axelar-network/axelar-gmp-sdk-solidity": "^2.0.0",
+    "@ethersproject/units": "^5.7.0",
     "@openzeppelin/contracts": "^4.8.2",
     "@primitivefi/hardhat-dodoc": "^0.2.3",
     "dotenv": "^16.0.3",
