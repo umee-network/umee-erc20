@@ -1,13 +1,19 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity ^0.8.9;
+pragma solidity 0.8.9;
 
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
-import "./axelar/IAxelarExecutable.sol";
+
+import {AxelarExecutable} from "@axelar-network/axelar-gmp-sdk-solidity/contracts/executables/AxelarExecutable.sol";
+import {IAxelarGateway} from "@axelar-network/axelar-gmp-sdk-solidity/contracts/interfaces/IAxelarGateway.sol";
+import {IAxelarGasService} from "@axelar-network/axelar-gmp-sdk-solidity/contracts/interfaces/IAxelarGasService.sol";
 
 error InvalidAmount();
 
-contract UmeeAxelarToken is ERC20, IAxelarExecutable, ReentrancyGuard {
+contract UmeeAxelarToken is ERC20, AxelarExecutable, ReentrancyGuard {
+    IAxelarGasService public immutable gasReceiver;
+
     address public gravityBridgeUmee;
     uint256 tokensSwapped = 0;
 
