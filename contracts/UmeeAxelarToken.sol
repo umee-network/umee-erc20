@@ -21,8 +21,10 @@ contract UmeeAxelarToken is ERC20, AxelarExecutable, ReentrancyGuard {
 
     constructor(
         address _gravityBridgeUmee,
-        address _gateway
-    ) ERC20("UMEE", "UMEE") IAxelarExecutable(_gateway) {
+        address _gateway,
+        address _gasReceiver
+    ) ERC20("UMEE", "UMEE") AxelarExecutable(_gateway) {
+        gasReceiver = IAxelarGasService(_gasReceiver);
         gravityBridgeUmee = _gravityBridgeUmee;
     }
 
@@ -37,9 +39,41 @@ contract UmeeAxelarToken is ERC20, AxelarExecutable, ReentrancyGuard {
         emit Swap(msg.sender, amount);
     }
 
-    function bridge(uint256 amount) {
-        _burn(msg.sender, amount);
-       callContract("umee", address)
+    function bridge(
+        string memory destinationChain,
+        string memory destinationAddress,
+        string memory receiverAddress,
+        string memory symbol,
+        uint256 amount
+    ) external payable {
+        if (amount == 0) revert InvalidAmount();
+
+        address tokenAddress = gateway.tokenAddresses(symbol);
+        IERC20(tokenAddress).transferFrom(msg.sender, address(this), amount);
+        IERC20(tokenAddress).approve(address(gateway), amount);
+
+        bytes memory payload = abi.encode(receiverAddress);
+
+        // optional pay gas service
+        if (msg.value > 0) {
+            gasReceiver.payNativeGasForContractCallWithToken{value: msg.value}(
+                address(this),
+                destinationChain,
+                destinationAddress,
+                payload,
+                symbol,
+                amount,
+                msg.sender
+            );
+        }
+
+        gateway.callContractWithToken(
+            destinationChain,
+            destinationAddress,
+            payload,
+            symbol,
+            amount
+        );
     }
 
     /**
