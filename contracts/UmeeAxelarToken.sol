@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity 0.8.9;
 
+import "@openzeppelin/contracts/token/ERC20/extensions/draft-ERC20Permit.sol";
+
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
@@ -38,7 +40,7 @@ contract UmeeAxelarToken is ERC20Permit, AxelarExecutable, ReentrancyGuard {
         address _gravityBridgeUmee,
         address _gateway,
         address _gasReceiver
-    ) ERC20("UMEE", "UMEE") AxelarExecutable(_gateway) {
+    ) ERC20Permit("UMEE") ERC20("UMEE", "UMEE") AxelarExecutable(_gateway) {
         gasReceiver = IAxelarGasService(_gasReceiver);
         gravityBridgeUmee = _gravityBridgeUmee;
     }
