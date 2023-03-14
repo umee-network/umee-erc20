@@ -9,16 +9,30 @@ import {AxelarExecutable} from "@axelar-network/axelar-gmp-sdk-solidity/contract
 import {IAxelarGateway} from "@axelar-network/axelar-gmp-sdk-solidity/contracts/interfaces/IAxelarGateway.sol";
 import {IAxelarGasService} from "@axelar-network/axelar-gmp-sdk-solidity/contracts/interfaces/IAxelarGasService.sol";
 
+/**
+ * @dev Custom error thrown when the provided amount is less then zero.
+ */
 error InvalidAmount();
 
 contract UmeeAxelarToken is ERC20, AxelarExecutable, ReentrancyGuard {
     IAxelarGasService public immutable gasReceiver;
 
     address public gravityBridgeUmee;
-    uint256 tokensSwapped = 0;
+    uint256 public tokensSwapped = 0;
 
+    /**
+     * @dev Emitted when a token swap occurs.
+     * @param user The address of the user who initiated the swap.
+     * @param amount The amount of tokens swapped.
+     */
     event Swap(address indexed user, uint256 amount);
 
+    /**
+     * @dev Initializes the contract with the provided parameters.
+     * @param _gravityBridgeUmee The address of the Gravity Bridge Umee token contract.
+     * @param _gateway The address of the Axelar Gateway contract.
+     * @param _gasReceiver The address of the Axelar Gas Service contract.
+     */
     constructor(
         address _gravityBridgeUmee,
         address _gateway,
@@ -28,6 +42,10 @@ contract UmeeAxelarToken is ERC20, AxelarExecutable, ReentrancyGuard {
         gravityBridgeUmee = _gravityBridgeUmee;
     }
 
+    /**
+     * @dev Swaps Deprecated Gravity Bridge UMEE for the new, axelar supported UMEE tokens.
+     * @param amount The amount of UMEE tokens to be swapped.
+     */
     function swap(uint256 amount) public nonReentrant {
         if (amount == 0) revert InvalidAmount();
 
@@ -39,14 +57,21 @@ contract UmeeAxelarToken is ERC20, AxelarExecutable, ReentrancyGuard {
         emit Swap(msg.sender, amount);
     }
 
+    /**
+     * @dev Bridges UMEE tokens from current chain to the Umee Cosmos Chain
+     * @param destinationChain The destination chain
+     * @param destinationAddress The destination address on the other chain.
+     * @param receiverAddress The receiver address on the other chain.
+     * @param amount The amount of UMEE tokens to be bridged.
+     */
     function bridge(
         string memory destinationChain,
         string memory destinationAddress,
         string memory receiverAddress,
-        string memory symbol,
         uint256 amount
     ) external payable {
         if (amount == 0) revert InvalidAmount();
+        string memory symbol = "umee";
 
         address tokenAddress = gateway.tokenAddresses(symbol);
         IERC20(tokenAddress).transferFrom(msg.sender, address(this), amount);
