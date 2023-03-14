@@ -21,11 +21,11 @@ contract UmeeAxelarToken is ERC20, AxelarExecutable, ReentrancyGuard {
     uint256 public tokensSwapped = 0;
 
     /**
-     * @dev Emitted when a token swap occurs.
+     * @dev Emitted when a Gravity Bridge token swap occurs.
      * @param user The address of the user who initiated the swap.
      * @param amount The amount of tokens swapped.
      */
-    event Swap(address indexed user, uint256 amount);
+    event SwapGB(address indexed user, uint256 amount);
 
     /**
      * @dev Initializes the contract with the provided parameters.
@@ -46,7 +46,7 @@ contract UmeeAxelarToken is ERC20, AxelarExecutable, ReentrancyGuard {
      * @dev Swaps Deprecated Gravity Bridge UMEE for the new, axelar supported UMEE tokens.
      * @param amount The amount of UMEE tokens to be swapped.
      */
-    function swap(uint256 amount) public nonReentrant {
+    function swapGB(uint256 amount) public nonReentrant {
         if (amount == 0) revert InvalidAmount();
 
         ERC20(gravityBridgeUmee).transferFrom(msg.sender, address(0), amount);
@@ -54,7 +54,7 @@ contract UmeeAxelarToken is ERC20, AxelarExecutable, ReentrancyGuard {
         tokensSwapped += amount;
 
         _mint(msg.sender, amount);
-        emit Swap(msg.sender, amount);
+        emit SwapGB(msg.sender, amount);
     }
 
     /**
