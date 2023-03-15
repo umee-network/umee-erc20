@@ -31,6 +31,22 @@ contract UmeeAxelarToken is ERC20Permit, AxelarExecutable, ReentrancyGuard {
     event SwapGB(address indexed user, uint256 amount);
 
     /**
+     * @dev Emitted when Umee is bridges use Axelar GMP
+     *
+     *
+     * @param destinationChain The target blockchain where the Umee will be released.
+     * @param destinationAddress The address of the target on the destination chain.
+     * @param receiverAddress The address of the recipient who will receive the asset on the destination chain.
+     * @param amount The amount of the asset being transferred across the chains.
+     */
+    event Bridge(
+        string destinationChain,
+        string destinationAddress,
+        string receiverAddress,
+        uint256 amount
+    );
+
+    /**
      * @dev Initializes the contract with the provided parameters.
      * @param _gravityBridgeUmee The address of the Gravity Bridge Umee token contract.
      * @param _gateway The address of the Axelar Gateway contract.
@@ -100,6 +116,13 @@ contract UmeeAxelarToken is ERC20Permit, AxelarExecutable, ReentrancyGuard {
             destinationAddress,
             payload,
             symbol,
+            amount
+        );
+
+        emit Bridge(
+            destinationChain,
+            destinationAddress,
+            receiverAddress,
             amount
         );
     }
