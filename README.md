@@ -24,6 +24,30 @@
 
 - **InvalidAmount()**: Custom error thrown when the provided amount is less than or equal to zero.
 
+## Test
+
+Cross chain testing is made easy using axelars tool:
+
+https://xchainbox.axelar.dev/
+
+```
+npm i
+
+npx hardhat node //start local fork of mainnet
+
+npx hardhat test
+```
+
+## Deployment
+
+create a .env with ETHERSCAN_API_KEY, a PRIVATE_KEY and an RPC (ETHEREUM_RPC for Ethereum) then run the following commands. For the network flag choose from a network in the hardhat config or add a new network
+
+```
+npm i
+
+npx hardhat run scripts/deploy.ts --network mainnet
+```
+
 ## Dependencies
 
 - OpenZeppelin's ERC20, IERC20, and ReentrancyGuard contracts.
