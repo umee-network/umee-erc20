@@ -1,18 +1,42 @@
 import { ethers } from "hardhat";
+const hre = require("hardhat");
 
 async function main() {
-  const currentTimestampInSeconds = Math.round(Date.now() / 1000);
-  const ONE_YEAR_IN_SECS = 365 * 24 * 60 * 60;
-  const unlockTime = currentTimestampInSeconds + ONE_YEAR_IN_SECS;
+  const axelarGateWay = "0x4F4495243837681061C4743b74B3eEdf548D56A5"; // mainnet
+  const axelarGasReciever = "0x2d5d7d31F671F86C782533cc367F14109a082712"; // mainnet
 
-  const lockedAmount = ethers.utils.parseEther("1");
+  const Token = await ethers.getContractFactory("TestUmee");
+  const oldUmee = await Token.deploy();
 
-  const Lock = await ethers.getContractFactory("Lock");
-  const lock = await Lock.deploy(unlockTime, { value: lockedAmount });
+  const UmeeToken = await ethers.getContractFactory("UmeeAxelarToken");
+  const umeeToken = await UmeeToken.deploy(
+    oldUmee.address,
+    axelarGateWay,
+    axelarGasReciever
+  );
 
-  await lock.deployed();
+  console.log(
+    `New Umee Token deployed at ${umeeToken.address} with old umee at ${oldUmee.address}`
+  );
 
-  console.log(`Lock with 1 ETH and unlock timestamp ${unlockTime} deployed to ${lock.address}`);
+  try {
+    await hre.run("verify:verify", {
+      contract: "contracts/test/TestUmee.sol:TestUmee",
+      address: oldUmee.address,
+      constructorArguments: [],
+    });
+  } catch (error) {
+    console.log("Old Umee Failed to verify::", error);
+  }
+  try {
+    await hre.run("verify:verify", {
+      contract: "contracts/UmeeAxelarToken.sol:UmeeAxelarToken",
+      address: umeeToken.address,
+      constructorArguments: [oldUmee.address, axelarGateWay, axelarGasReciever],
+    });
+  } catch (error) {
+    console.log("New Umee Failed to verify::", error);
+  }
 }
 
 // We recommend this pattern to be able to use async/await everywhere
