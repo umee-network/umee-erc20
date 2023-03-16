@@ -34,6 +34,11 @@ const config: HardhatUserConfig = {
       accounts:
         process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
     },
+    goerli: {
+      url: process.env.GOERLI_RPC || "",
+      accounts:
+        process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
+    },
   },
   dodoc: {
     runOnCompile: false,
@@ -49,6 +54,7 @@ const config: HardhatUserConfig = {
   etherscan: {
     apiKey: {
       1: process.env.ETHERSCAN_API_KEY || "",
+      goerli: process.env.ETHERSCAN_API_KEY || "",
     },
   },
   contractSizer: {

@@ -26,9 +26,9 @@
 
 ## Test
 
-Cross chain testing is made easy using axelars tool:
+Cross chain testing is made easy using axelars tool: https://xchainbox.axelar.dev/
 
-https://xchainbox.axelar.dev/
+Testnet Addresses: https://docs.axelar.dev/dev/reference/testnet-contract-addresses
 
 ```
 npm i
@@ -37,6 +37,13 @@ npx hardhat node //start local fork of mainnet
 
 npx hardhat test
 ```
+
+## Live Contract:
+
+### Goerli
+
+New Umee: https://goerli.etherscan.io/address/0x8db0e836aa049ED0E0c6cbdc6109b154eab813B3#code
+Test GB Umee: https://goerli.etherscan.io/address/0x080DF11a53555FeA2c31f76a2C6b45688a1fC756#code
 
 ## Deployment
 
