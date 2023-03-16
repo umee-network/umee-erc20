@@ -9,14 +9,14 @@ describe("Test Burn", function () {
     // Contracts are deployed using the first signer/account by default
     const [owner, otherAccount] = await ethers.getSigners();
 
-    const Token = await ethers.getContractFactory("TestUmee");
-    const oldUmee = await Token.deploy();
+    const Token = await ethers.getContractFactory("GravityBridgeUmee");
+    const gravityBridgeUmee = await Token.deploy();
     //old umee mainnet: 0xc0a4df35568f116c370e6a6a6022ceb908eeddac
     const axelarGateWay = "0x4F4495243837681061C4743b74B3eEdf548D56A5"; // mainnet
     const axelarGasReciever = "0x2d5d7d31F671F86C782533cc367F14109a082712"; // mainnet
     const UmeeToken = await ethers.getContractFactory("UmeeAxelarToken");
     const umeeToken = await UmeeToken.deploy(
-      oldUmee.address,
+      gravityBridgeUmee.address,
       axelarGateWay,
       axelarGasReciever
     );
@@ -24,30 +24,36 @@ describe("Test Burn", function () {
     const decimal = 6;
     const deadAddress = await umeeToken.deadAddress();
 
-    return { umeeToken, oldUmee, owner, otherAccount, decimal, deadAddress };
+    return {
+      umeeToken,
+      gravityBridgeUmee,
+      owner,
+      otherAccount,
+      decimal,
+      deadAddress,
+    };
   }
 
   describe("Test Gravity Bridge Swap and Burn", function () {
     it("Should check that test gravity bridge umee was deployed correctly", async function () {
-      const { umeeToken, oldUmee, owner, decimal } = await loadFixture(
-        deployTestFixture
-      );
+      const { umeeToken, gravityBridgeUmee, owner, decimal } =
+        await loadFixture(deployTestFixture);
 
-      expect(await oldUmee.totalSupply()).to.equal(
+      expect(await gravityBridgeUmee.totalSupply()).to.equal(
         parseUnits("1000000", decimal)
       );
-      expect(await oldUmee.balanceOf(owner.address)).to.equal(
-        await oldUmee.totalSupply()
+      expect(await gravityBridgeUmee.balanceOf(owner.address)).to.equal(
+        await gravityBridgeUmee.totalSupply()
       );
       expect(await umeeToken.balanceOf(owner.address)).to.equal(0);
       expect(await umeeToken.totalSupply()).to.equal(0);
     });
 
     it("Should swap Gravity Bridge Umee with New Umee ", async function () {
-      const { umeeToken, oldUmee, owner, decimal, deadAddress } =
+      const { umeeToken, gravityBridgeUmee, owner, decimal, deadAddress } =
         await loadFixture(deployTestFixture);
 
-      const approve = await oldUmee.approve(
+      const approve = await gravityBridgeUmee.approve(
         umeeToken.address,
         parseUnits("100", decimal)
       );
@@ -56,22 +62,22 @@ describe("Test Burn", function () {
       const swap = await umeeToken.swapGB(parseUnits("100", decimal));
       await swap.wait();
 
-      expect(await oldUmee.balanceOf(owner.address)).to.equal(
+      expect(await gravityBridgeUmee.balanceOf(owner.address)).to.equal(
         parseUnits("999900", decimal)
       );
       expect(await umeeToken.balanceOf(owner.address)).to.equal(
         parseUnits("100", decimal)
       );
-      expect(await oldUmee.balanceOf(deadAddress)).to.equal(
+      expect(await gravityBridgeUmee.balanceOf(deadAddress)).to.equal(
         parseUnits("100", decimal)
       );
     });
 
     it("Should burn old Umee", async function () {
-      const { umeeToken, oldUmee, owner, decimal, deadAddress } =
+      const { umeeToken, gravityBridgeUmee, owner, decimal, deadAddress } =
         await loadFixture(deployTestFixture);
 
-      const approve = await oldUmee.approve(
+      const approve = await gravityBridgeUmee.approve(
         umeeToken.address,
         parseUnits("100", decimal)
       );
@@ -80,16 +86,16 @@ describe("Test Burn", function () {
       const swap = await umeeToken.swapGB(parseUnits("100", decimal));
       await swap.wait();
 
-      expect(await oldUmee.balanceOf(deadAddress)).to.equal(
+      expect(await gravityBridgeUmee.balanceOf(deadAddress)).to.equal(
         parseUnits("100", decimal)
       );
     });
 
     it("Should mint new Umee", async function () {
-      const { umeeToken, oldUmee, owner, decimal, deadAddress } =
+      const { umeeToken, gravityBridgeUmee, owner, decimal, deadAddress } =
         await loadFixture(deployTestFixture);
 
-      const approve = await oldUmee.approve(
+      const approve = await gravityBridgeUmee.approve(
         umeeToken.address,
         parseUnits("100", decimal)
       );
@@ -112,11 +118,11 @@ describe("Test Burn", function () {
 
   // describe("Test Axelar Bridge GMP", function () {
   //   it("Should try bridging tokens", async function () {
-  //     const { umeeToken, oldUmee, owner, decimal } = await loadFixture(
+  //     const { umeeToken, gravityBridgeUmee, owner, decimal } = await loadFixture(
   //       deployTestFixture
   //     );
 
-  //     const approve = await oldUmee.approve(
+  //     const approve = await gravityBridgeUmee.approve(
   //       umeeToken.address,
   //       parseUnits("100", decimal)
   //     );
@@ -132,7 +138,7 @@ describe("Test Burn", function () {
   //     const amount = parseUnits("10", 6);
 
   //     console.log("umeeToken.address: ", umeeToken.address);
-  //     console.log("oldUmee.address: ", oldUmee.address);
+  //     console.log("gravityBridgeUmee.address: ", gravityBridgeUmee.address);
 
   //     const approveTx = await umeeToken.approve(umeeToken.address, "100");
   //     await approveTx.wait();
@@ -149,11 +155,10 @@ describe("Test Burn", function () {
 
   describe("Events", function () {
     it("Should emit an event on swap", async function () {
-      const { umeeToken, oldUmee, owner, decimal } = await loadFixture(
-        deployTestFixture
-      );
+      const { umeeToken, gravityBridgeUmee, owner, decimal } =
+        await loadFixture(deployTestFixture);
 
-      const approve = await oldUmee.approve(
+      const approve = await gravityBridgeUmee.approve(
         umeeToken.address,
         parseUnits("50", decimal)
       );
