@@ -42,7 +42,7 @@ contract UmeeAxelarToken is ERC20Permit, AxelarExecutable, ReentrancyGuard {
     event Bridge(
         string destinationChain,
         string destinationAddress,
-        string receiverAddress,
+        string[] receiverAddress,
         uint256 amount
     );
 
@@ -86,7 +86,7 @@ contract UmeeAxelarToken is ERC20Permit, AxelarExecutable, ReentrancyGuard {
     function bridge(
         string memory destinationChain,
         string memory destinationAddress,
-        string memory receiverAddress,
+        string[] calldata receiverAddress,
         uint256 amount
     ) external payable {
         if (amount == 0) revert InvalidAmount();
