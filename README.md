@@ -42,8 +42,8 @@ npx hardhat test
 
 ### Goerli
 
-New Umee: https://goerli.etherscan.io/address/0x8db0e836aa049ED0E0c6cbdc6109b154eab813B3#code
-Test GB Umee: https://goerli.etherscan.io/address/0x080DF11a53555FeA2c31f76a2C6b45688a1fC756#code
+New Umee: https://goerli.etherscan.io/address/0x434bc12B22844311Db37309974e82466D9C4C8Dc#code
+Test GB Umee: https://goerli.etherscan.io/address/0x77D8aaFc623618d4E1a820A45D37e242054aaF05#code
 
 ## Deployment
 
