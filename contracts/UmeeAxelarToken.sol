@@ -92,9 +92,8 @@ contract UmeeAxelarToken is ERC20Permit, AxelarExecutable, ReentrancyGuard {
         if (amount == 0) revert InvalidAmount();
         string memory symbol = "umee";
 
-        address tokenAddress = gateway.tokenAddresses(symbol);
-        IERC20(tokenAddress).transferFrom(msg.sender, address(this), amount);
-        IERC20(tokenAddress).approve(address(gateway), amount);
+        IERC20(address(this)).transferFrom(msg.sender, address(this), amount);
+        IERC20(address(this)).approve(address(gateway), amount);
 
         bytes memory payload = abi.encode(receiverAddress);
 
