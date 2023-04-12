@@ -12,14 +12,9 @@ describe("Test Burn", function () {
     const Token = await ethers.getContractFactory("GravityBridgeUmee");
     const gravityBridgeUmee = await Token.deploy();
     //old umee mainnet: 0xc0a4df35568f116c370e6a6a6022ceb908eeddac
-    const axelarGateWay = "0x4F4495243837681061C4743b74B3eEdf548D56A5"; // mainnet
-    const axelarGasReciever = "0x2d5d7d31F671F86C782533cc367F14109a082712"; // mainnet
-    const UmeeToken = await ethers.getContractFactory("UmeeAxelarToken");
-    const umeeToken = await UmeeToken.deploy(
-      gravityBridgeUmee.address,
-      axelarGateWay,
-      axelarGasReciever
-    );
+
+    const UmeeToken = await ethers.getContractFactory("Umee");
+    const umeeToken = await UmeeToken.deploy(gravityBridgeUmee.address);
 
     const decimal = 6;
     const deadAddress = await umeeToken.deadAddress();
@@ -114,45 +109,6 @@ describe("Test Burn", function () {
     });
   });
 
-  //Need to test manually after deploying to testnet
-
-  // describe("Test Axelar Bridge GMP", function () {
-  //   it("Should try bridging tokens", async function () {
-  //     const { umeeToken, gravityBridgeUmee, owner, decimal } = await loadFixture(
-  //       deployTestFixture
-  //     );
-
-  //     const approve = await gravityBridgeUmee.approve(
-  //       umeeToken.address,
-  //       parseUnits("100", decimal)
-  //     );
-  //     await approve.wait();
-
-  //     const swap = await umeeToken.swapGB(parseUnits("100", decimal));
-  //     await swap.wait();
-
-  //     const destChain = "demo-chain";
-  //     const destAddress = "axelar16rdjmg0ddsy6tg2m945uyj8jnltk4tpw22quxg";
-  //     const receiver = ["axelar1cvgeu38h8x0hrqnp39c836fymv7s2an332u6vh"];
-  //     const symbol = "axlUSDA";
-  //     const amount = parseUnits("10", 6);
-
-  //     console.log("umeeToken.address: ", umeeToken.address);
-  //     console.log("gravityBridgeUmee.address: ", gravityBridgeUmee.address);
-
-  //     const approveTx = await umeeToken.approve(umeeToken.address, "100");
-  //     await approveTx.wait();
-
-  //     const sendTx = await umeeToken.bridge(
-  //       destChain,
-  //       destAddress,
-  //       receiver,
-  //       amount
-  //     );
-  //     const tx = await sendTx.wait();
-  //   });
-  // });
-
   describe("Events", function () {
     it("Should emit an event on swap", async function () {
       const { umeeToken, gravityBridgeUmee, owner, decimal } =
@@ -170,64 +126,3 @@ describe("Test Burn", function () {
     });
   });
 });
-
-// it("Should receive and store the funds to lock", async function () {
-//   const { lock, lockedAmount } = await loadFixture(
-//     deployOneYearLockFixture
-//   );
-
-//   expect(await ethers.provider.getBalance(lock.address)).to.equal(
-//     lockedAmount
-//   );
-// });
-
-// it("Should fail if the unlockTime is not in the future", async function () {
-//   // We don't use the fixture here because we want a different deployment
-//   const latestTime = await time.latest();
-//   const Lock = await ethers.getContractFactory("Lock");
-//   await expect(Lock.deploy(latestTime, { value: 1 })).to.be.revertedWith(
-//     "Unlock time should be in the future"
-//   );
-// });
-// });
-
-// describe("Withdrawals", function () {
-// describe("Validations", function () {
-//   it("Should revert with the right error if called too soon", async function () {
-//     const { lock } = await loadFixture(deployOneYearLockFixture);
-//     await expect(lock.withdraw()).to.be.revertedWith(
-//       "You can't withdraw yet"
-//     );
-//   });
-//   it("Should revert with the right error if called from another account", async function () {
-//     const { lock, unlockTime, otherAccount } = await loadFixture(
-//       deployOneYearLockFixture
-//     );
-//     // We can increase the time in Hardhat Network
-//     await time.increaseTo(unlockTime);
-//     // We use lock.connect() to send a transaction from another account
-//     await expect(lock.connect(otherAccount).withdraw()).to.be.revertedWith(
-//       "You aren't the owner"
-//     );
-//   });
-//   it("Shouldn't fail if the unlockTime has arrived and the owner calls it", async function () {
-//     const { lock, unlockTime } = await loadFixture(
-//       deployOneYearLockFixture
-//     );
-//     // Transactions are sent using the first signer by default
-//     await time.increaseTo(unlockTime);
-//     await expect(lock.withdraw()).not.to.be.reverted;
-//   });
-// });
-// describe("Transfers", function () {
-//   it("Should transfer the funds to the owner", async function () {
-//     const { lock, unlockTime, lockedAmount, owner } = await loadFixture(
-//       deployOneYearLockFixture
-//     );
-//     await time.increaseTo(unlockTime);
-//     await expect(lock.withdraw()).to.changeEtherBalances(
-//       [owner, lock],
-//       [lockedAmount, -lockedAmount]
-//     );
-//   });
-// });
