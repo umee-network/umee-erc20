@@ -1,5 +1,16 @@
 {
     "methods": {
+        "DOMAIN_SEPARATOR()": {
+            "stateMutability": "view",
+            "code": "function DOMAIN_SEPARATOR() external view returns (bytes32)",
+            "inputs": {},
+            "outputs": {
+                "_0": {
+                    "type": "bytes32"
+                }
+            },
+            "details": "See {IERC20Permit-DOMAIN_SEPARATOR}."
+        },
         "allowance(address,address)": {
             "stateMutability": "view",
             "code": "function allowance(address owner, address spender) external view returns (uint256)",
@@ -51,25 +62,15 @@
             },
             "details": "See {IERC20-balanceOf}."
         },
-        "bridge(string,string,uint256)": {
-            "stateMutability": "payable",
-            "code": "function bridge(string destinationAddress, string receiverAddress, uint256 amount) external payable",
-            "inputs": {
-                "destinationAddress": {
-                    "type": "string",
-                    "description": "The destination address on the other chain."
-                },
-                "receiverAddress": {
-                    "type": "string",
-                    "description": "The receiver address on the other chain."
-                },
-                "amount": {
-                    "type": "uint256",
-                    "description": "The amount of UMEE tokens to be bridged."
+        "deadAddress()": {
+            "stateMutability": "view",
+            "code": "function deadAddress() external view returns (address)",
+            "inputs": {},
+            "outputs": {
+                "_0": {
+                    "type": "address"
                 }
-            },
-            "outputs": {},
-            "details": "Bridges UMEE tokens from current chain to the Umee Cosmos Chain"
+            }
         },
         "decimals()": {
             "stateMutability": "view",
@@ -99,70 +100,6 @@
                 }
             },
             "details": "Atomically decreases the allowance granted to `spender` by the caller. This is an alternative to {approve} that can be used as a mitigation for problems described in {IERC20-approve}. Emits an {Approval} event indicating the updated allowance. Requirements: - `spender` cannot be the zero address. - `spender` must have allowance for the caller of at least `subtractedValue`."
-        },
-        "execute(bytes32,string,string,bytes)": {
-            "stateMutability": "nonpayable",
-            "code": "function execute(bytes32 commandId, string sourceChain, string sourceAddress, bytes payload) external nonpayable",
-            "inputs": {
-                "commandId": {
-                    "type": "bytes32"
-                },
-                "sourceChain": {
-                    "type": "string"
-                },
-                "sourceAddress": {
-                    "type": "string"
-                },
-                "payload": {
-                    "type": "bytes"
-                }
-            },
-            "outputs": {}
-        },
-        "executeWithToken(bytes32,string,string,bytes,string,uint256)": {
-            "stateMutability": "nonpayable",
-            "code": "function executeWithToken(bytes32 commandId, string sourceChain, string sourceAddress, bytes payload, string tokenSymbol, uint256 amount) external nonpayable",
-            "inputs": {
-                "commandId": {
-                    "type": "bytes32"
-                },
-                "sourceChain": {
-                    "type": "string"
-                },
-                "sourceAddress": {
-                    "type": "string"
-                },
-                "payload": {
-                    "type": "bytes"
-                },
-                "tokenSymbol": {
-                    "type": "string"
-                },
-                "amount": {
-                    "type": "uint256"
-                }
-            },
-            "outputs": {}
-        },
-        "gasReceiver()": {
-            "stateMutability": "view",
-            "code": "function gasReceiver() external view returns (contract IAxelarGasService)",
-            "inputs": {},
-            "outputs": {
-                "_0": {
-                    "type": "contract IAxelarGasService"
-                }
-            }
-        },
-        "gateway()": {
-            "stateMutability": "view",
-            "code": "function gateway() external view returns (contract IAxelarGateway)",
-            "inputs": {},
-            "outputs": {
-                "_0": {
-                    "type": "contract IAxelarGateway"
-                }
-            }
         },
         "gravityBridgeUmee()": {
             "stateMutability": "view",
@@ -203,9 +140,53 @@
             },
             "details": "Returns the name of the token."
         },
-        "swap(uint256)": {
+        "nonces(address)": {
+            "stateMutability": "view",
+            "code": "function nonces(address owner) external view returns (uint256)",
+            "inputs": {
+                "owner": {
+                    "type": "address"
+                }
+            },
+            "outputs": {
+                "_0": {
+                    "type": "uint256"
+                }
+            },
+            "details": "See {IERC20Permit-nonces}."
+        },
+        "permit(address,address,uint256,uint256,uint8,bytes32,bytes32)": {
             "stateMutability": "nonpayable",
-            "code": "function swap(uint256 amount) external nonpayable",
+            "code": "function permit(address owner, address spender, uint256 value, uint256 deadline, uint8 v, bytes32 r, bytes32 s) external nonpayable",
+            "inputs": {
+                "owner": {
+                    "type": "address"
+                },
+                "spender": {
+                    "type": "address"
+                },
+                "value": {
+                    "type": "uint256"
+                },
+                "deadline": {
+                    "type": "uint256"
+                },
+                "v": {
+                    "type": "uint8"
+                },
+                "r": {
+                    "type": "bytes32"
+                },
+                "s": {
+                    "type": "bytes32"
+                }
+            },
+            "outputs": {},
+            "details": "See {IERC20Permit-permit}."
+        },
+        "swapGB(uint256)": {
+            "stateMutability": "nonpayable",
+            "code": "function swapGB(uint256 amount) external nonpayable",
             "inputs": {
                 "amount": {
                     "type": "uint256",
@@ -305,8 +286,8 @@
                 }
             }
         },
-        "Swap": {
-            "code": "event Swap(address indexed user, uint256 amount)",
+        "SwapGB": {
+            "code": "event SwapGB(address indexed user, uint256 amount)",
             "inputs": {
                 "user": {
                     "type": "address",
@@ -319,7 +300,7 @@
                     "description": "The amount of tokens swapped."
                 }
             },
-            "details": "Emitted when a token swap occurs."
+            "details": "Emitted when a Gravity Bridge token swap occurs."
         },
         "Transfer": {
             "code": "event Transfer(address indexed from, address indexed to, uint256 value)",
@@ -340,20 +321,12 @@
         }
     },
     "errors": {
-        "InvalidAddress": {
-            "code": "error InvalidAddress()",
-            "inputs": {}
-        },
         "InvalidAmount": {
             "code": "error InvalidAmount()",
             "inputs": {},
             "details": "Custom error thrown when the provided amount is less then zero."
-        },
-        "NotApprovedByGateway": {
-            "code": "error NotApprovedByGateway()",
-            "inputs": {}
         }
     },
     "path": "",
-    "name": "UmeeAxelarToken"
+    "name": "Umee"
 }

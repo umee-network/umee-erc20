@@ -43,7 +43,7 @@ const config: HardhatUserConfig = {
   dodoc: {
     runOnCompile: false,
     debugMode: true,
-    include: ["contracts/UmeeAxelarToken.sol"],
+    include: ["contracts/UmeeToken.sol"],
     // More options...
   },
   gasReporter: {
