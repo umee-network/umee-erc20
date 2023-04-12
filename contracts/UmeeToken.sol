@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity 0.8.9;
+pragma solidity 0.8.19;
 
 import "@openzeppelin/contracts/token/ERC20/extensions/draft-ERC20Permit.sol";
 
@@ -11,6 +11,16 @@ import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
  * @dev Custom error thrown when the provided amount is less then zero.
  */
 error InvalidAmount();
+
+/**
+ * @dev Custom error thrown when the user doesn't have enough tokens to swap.
+ */
+error InsufficientBalance();
+
+/**
+ * @dev Custom error thrown when the user hasn't approved the contract to spend their tokens.
+ */
+error InsufficientAllowance();
 
 contract Umee is ERC20Permit, ReentrancyGuard {
     address public deadAddress = 0x000000000000000000000000000000000000dEaD;
@@ -40,6 +50,12 @@ contract Umee is ERC20Permit, ReentrancyGuard {
      */
     function swapGB(uint256 amount) public nonReentrant {
         if (amount == 0) revert InvalidAmount();
+        if (amount > ERC20(gravityBridgeUmee).balanceOf(msg.sender))
+            revert InsufficientBalance();
+        if (
+            amount >
+            ERC20(gravityBridgeUmee).allowance(msg.sender, address(this))
+        ) revert InsufficientAllowance();
 
         ERC20(gravityBridgeUmee).transferFrom(msg.sender, deadAddress, amount);
 
