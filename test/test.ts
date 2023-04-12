@@ -112,7 +112,7 @@ describe("Test Burn", function () {
       );
     });
     it("Should burn old Umee", async function () {
-      const { umeeToken, gravityBridgeUmee, owner, decimal, deadAddress } =
+      const { umeeToken, gravityBridgeUmee, decimal, deadAddress } =
         await loadFixture(deployTestFixture);
 
       const approve = await gravityBridgeUmee.approve(
@@ -130,7 +130,7 @@ describe("Test Burn", function () {
     });
 
     it("Should mint new Umee", async function () {
-      const { umeeToken, gravityBridgeUmee, owner, decimal, deadAddress } =
+      const { umeeToken, gravityBridgeUmee, owner, decimal } =
         await loadFixture(deployTestFixture);
 
       const approve = await gravityBridgeUmee.approve(
@@ -171,8 +171,7 @@ describe("Test Burn", function () {
 
   describe("Custom Errors", function () {
     it("should revert if amount is zero", async function () {
-      const { umeeToken, gravityBridgeUmee, owner, decimal } =
-        await loadFixture(deployTestFixture);
+      const { umeeToken } = await loadFixture(deployTestFixture);
 
       await expect(umeeToken.swapGB(0)).to.be.revertedWithCustomError(
         umeeToken,
@@ -181,7 +180,7 @@ describe("Test Burn", function () {
     });
 
     it("should revert if sender has insufficient balance", async function () {
-      const { umeeToken, gravityBridgeUmee, owner, decimal, otherAccount } =
+      const { umeeToken, gravityBridgeUmee, decimal, otherAccount } =
         await loadFixture(deployTestFixture);
 
       const approve = await gravityBridgeUmee
@@ -195,8 +194,7 @@ describe("Test Burn", function () {
     });
 
     it("should revert if sender has insufficient allowance", async function () {
-      const { umeeToken, gravityBridgeUmee, owner, decimal } =
-        await loadFixture(deployTestFixture);
+      const { umeeToken, decimal } = await loadFixture(deployTestFixture);
 
       await expect(
         umeeToken.swapGB(parseUnits("100", decimal))
