@@ -2,22 +2,11 @@ import { ethers } from "hardhat";
 const hre = require("hardhat");
 
 async function main() {
-  // const axelarGateWay = "0x4F4495243837681061C4743b74B3eEdf548D56A5"; // mainnet
-  // const axelarGasReciever = "0x2d5d7d31F671F86C782533cc367F14109a082712"; // mainnet
-
-  // chain-name: ethereum-2
-  const axelarGateWay = "0xe432150cce91c13a887f7D836923d5597adD8E31"; // goerli
-  const axelarGasReciever = "0xbE406F0189A0B4cf3A05C286473D23791Dd44Cc6"; // goerli
-
   const Token = await ethers.getContractFactory("GravityBridgeUmee");
   const gravityBridgeUmee = await Token.deploy();
 
-  const UmeeToken = await ethers.getContractFactory("UmeeAxelarToken");
-  const umeeToken = await UmeeToken.deploy(
-    gravityBridgeUmee.address,
-    axelarGateWay,
-    axelarGasReciever
-  );
+  const UmeeToken = await ethers.getContractFactory("Umee");
+  const umeeToken = await UmeeToken.deploy(gravityBridgeUmee.address);
 
   console.log(
     `New Umee Token deployed at ${umeeToken.address} with old umee at ${gravityBridgeUmee.address}`
@@ -38,13 +27,9 @@ async function main() {
   }
   try {
     await hre.run("verify:verify", {
-      contract: "contracts/UmeeAxelarToken.sol:UmeeAxelarToken",
+      contract: "contracts/UmeeToken.sol:Umee",
       address: umeeToken.address,
-      constructorArguments: [
-        gravityBridgeUmee.address,
-        axelarGateWay,
-        axelarGasReciever,
-      ],
+      constructorArguments: [gravityBridgeUmee.address],
     });
   } catch (error) {
     console.log("New Umee Failed to verify::", error);
