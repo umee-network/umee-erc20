@@ -66,8 +66,51 @@ describe("Test Burn", function () {
       expect(await gravityBridgeUmee.balanceOf(deadAddress)).to.equal(
         parseUnits("100", decimal)
       );
+      expect(await umeeToken.totalSupply()).to.equal(
+        await umeeToken.balanceOf(owner.address)
+      );
     });
 
+    it("should allow others to swap old gravity bridge umee for new umee", async function () {
+      const {
+        umeeToken,
+        gravityBridgeUmee,
+        owner,
+        decimal,
+        deadAddress,
+        otherAccount,
+      } = await loadFixture(deployTestFixture);
+
+      const sendToAccount = await gravityBridgeUmee.transfer(
+        otherAccount.address,
+        parseUnits("100", decimal)
+      );
+
+      await sendToAccount.wait();
+
+      const approve = await gravityBridgeUmee
+        .connect(otherAccount)
+        .approve(umeeToken.address, parseUnits("100", decimal));
+      await approve.wait();
+
+      const swap = await umeeToken
+        .connect(otherAccount)
+        .swapGB(parseUnits("100", decimal));
+      await swap.wait();
+
+      expect(await gravityBridgeUmee.balanceOf(otherAccount.address)).to.equal(
+        parseUnits("0", decimal)
+      );
+      expect(await umeeToken.balanceOf(otherAccount.address)).to.equal(
+        parseUnits("100", decimal)
+      );
+      expect(await gravityBridgeUmee.balanceOf(deadAddress)).to.equal(
+        parseUnits("100", decimal)
+      );
+      expect(await umeeToken.totalSupply()).to.equal(
+        await umeeToken.balanceOf(otherAccount.address)
+      );
+    });
     it("Should burn old Umee", async function () {
       const { umeeToken, gravityBridgeUmee, owner, decimal, deadAddress } =
         await loadFixture(deployTestFixture);
@@ -123,6 +166,41 @@ describe("Test Burn", function () {
       await expect(umeeToken.swapGB("50"))
         .to.emit(umeeToken, "SwapGB")
         .withArgs(owner.address, "50"); // We accept any value as `when` arg
+    });
+  });
+
+  describe("Custom Errors", function () {
+    it("should revert if amount is zero", async function () {
+      const { umeeToken, gravityBridgeUmee, owner, decimal } =
+        await loadFixture(deployTestFixture);
+
+      await expect(umeeToken.swapGB(0)).to.be.revertedWithCustomError(
+        umeeToken,
+        `InvalidAmount`
+      );
+    });
+
+    it("should revert if sender has insufficient balance", async function () {
+      const { umeeToken, gravityBridgeUmee, owner, decimal, otherAccount } =
+        await loadFixture(deployTestFixture);
+
+      const approve = await gravityBridgeUmee
+        .connect(otherAccount)
+        .approve(umeeToken.address, parseUnits("500", decimal));
+      await approve.wait();
+
+      await expect(
+        umeeToken.connect(otherAccount).swapGB(parseUnits("100", decimal))
+      ).to.be.revertedWithCustomError(umeeToken, `InsufficientBalance`);
+    });
+
+    it("should revert if sender has insufficient allowance", async function () {
+      const { umeeToken, gravityBridgeUmee, owner, decimal } =
+        await loadFixture(deployTestFixture);
+
+      await expect(
+        umeeToken.swapGB(parseUnits("100", decimal))
+      ).to.be.revertedWithCustomError(umeeToken, `InsufficientAllowance`);
     });
   });
 });
