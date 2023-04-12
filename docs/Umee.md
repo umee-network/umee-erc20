@@ -379,7 +379,7 @@ event Approval(address indexed owner, address indexed spender, uint256 value)
 
 
 
-
+*Emitted when the allowance of a `spender` for an `owner` is set by a call to {approve}. `value` is the new allowance.*
 
 #### Parameters
 
@@ -414,7 +414,7 @@ event Transfer(address indexed from, address indexed to, uint256 value)
 
 
 
-
+*Emitted when `value` tokens are moved from one account (`from`) to another (`to`). Note that `value` may be zero.*
 
 #### Parameters
 
@@ -427,6 +427,28 @@ event Transfer(address indexed from, address indexed to, uint256 value)
 
 
 ## Errors
+
+### InsufficientAllowance
+
+```solidity
+error InsufficientAllowance()
+```
+
+
+
+*Custom error thrown when the user hasn&#39;t approved the contract to spend their tokens.*
+
+
+### InsufficientBalance
+
+```solidity
+error InsufficientBalance()
+```
+
+
+
+*Custom error thrown when the user doesn&#39;t have enough tokens to swap.*
+
 
 ### InvalidAmount
 
