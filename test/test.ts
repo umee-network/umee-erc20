@@ -190,7 +190,7 @@ describe("Test Burn", function () {
 
       await expect(
         umeeToken.connect(otherAccount).swapGB(parseUnits("100", decimal))
-      ).to.be.revertedWithCustomError(umeeToken, `InsufficientBalance`);
+      ).to.be.revertedWith("ERC20: transfer amount exceeds balance");
     });
 
     it("should revert if sender has insufficient allowance", async function () {
@@ -198,7 +198,7 @@ describe("Test Burn", function () {
 
       await expect(
         umeeToken.swapGB(parseUnits("100", decimal))
-      ).to.be.revertedWithCustomError(umeeToken, `InsufficientAllowance`);
+      ).to.be.revertedWith("ERC20: insufficient allowance");
     });
   });
 });

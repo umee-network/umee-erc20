@@ -22,10 +22,6 @@ The new `Umee` is a Solidity smart contract designed to handle the transition of
 
 - **InvalidAmount()**: Custom error thrown when the provided amount is less than or equal to zero.
 
-- **InsufficientBalance()**: Custom error thrown when the provided amount is less than the users current balance. Unnessasary but will help give users clear error messages
-
-- **InsufficientAllowance()**: Custom error thrown when the provided amount is less than the users approved amount. Unnessasary but will help give users more clear messages
-
 Create a .env with ETHERSCAN_API_KEY, a PRIVATE_KEY and an RPC (ETHEREUM_RPC for Ethereum) then run the following commands. For the network flag choose from a network in the hardhat config or add a new network
 
 ## Test

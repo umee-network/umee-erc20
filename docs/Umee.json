@@ -323,16 +323,6 @@
         }
     },
     "errors": {
-        "InsufficientAllowance": {
-            "code": "error InsufficientAllowance()",
-            "inputs": {},
-            "details": "Custom error thrown when the user hasn't approved the contract to spend their tokens."
-        },
-        "InsufficientBalance": {
-            "code": "error InsufficientBalance()",
-            "inputs": {},
-            "details": "Custom error thrown when the user doesn't have enough tokens to swap."
-        },
         "InvalidAmount": {
             "code": "error InvalidAmount()",
             "inputs": {},

@@ -428,28 +428,6 @@ event Transfer(address indexed from, address indexed to, uint256 value)
 
 ## Errors
 
-### InsufficientAllowance
-
-```solidity
-error InsufficientAllowance()
-```
-
-
-
-*Custom error thrown when the user hasn&#39;t approved the contract to spend their tokens.*
-
-
-### InsufficientBalance
-
-```solidity
-error InsufficientBalance()
-```
-
-
-
-*Custom error thrown when the user doesn&#39;t have enough tokens to swap.*
-
-
 ### InvalidAmount
 
 ```solidity
