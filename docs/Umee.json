@@ -129,6 +129,16 @@
             },
             "details": "Atomically increases the allowance granted to `spender` by the caller. This is an alternative to {approve} that can be used as a mitigation for problems described in {IERC20-approve}. Emits an {Approval} event indicating the updated allowance. Requirements: - `spender` cannot be the zero address."
         },
+        "maxSupply()": {
+            "stateMutability": "view",
+            "code": "function maxSupply() external view returns (uint256)",
+            "inputs": {},
+            "outputs": {
+                "_0": {
+                    "type": "uint256"
+                }
+            }
+        },
         "name()": {
             "stateMutability": "view",
             "code": "function name() external view returns (string)",
@@ -207,9 +217,9 @@
             },
             "details": "Returns the symbol of the token, usually a shorter version of the name."
         },
-        "tokensSwapped()": {
+        "tokensMinted()": {
             "stateMutability": "view",
-            "code": "function tokensSwapped() external view returns (uint256)",
+            "code": "function tokensMinted() external view returns (uint256)",
             "inputs": {},
             "outputs": {
                 "_0": {
@@ -325,6 +335,11 @@
     "errors": {
         "InvalidAmount": {
             "code": "error InvalidAmount()",
+            "inputs": {},
+            "details": "Custom error thrown when the provided amount is less then zero."
+        },
+        "MaxSupplyReached": {
+            "code": "error MaxSupplyReached()",
             "inputs": {},
             "details": "Custom error thrown when the provided amount is less then zero."
         }

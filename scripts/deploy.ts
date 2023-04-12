@@ -1,12 +1,16 @@
 import { ethers } from "hardhat";
 const hre = require("hardhat");
+import { parseUnits } from "@ethersproject/units";
 
 async function main() {
   const Token = await ethers.getContractFactory("GravityBridgeUmee");
   const gravityBridgeUmee = await Token.deploy();
 
   const UmeeToken = await ethers.getContractFactory("Umee");
-  const umeeToken = await UmeeToken.deploy(gravityBridgeUmee.address);
+  const umeeToken = await UmeeToken.deploy(
+    gravityBridgeUmee.address,
+    parseUnits("500_000_000_000", "6")
+  );
 
   console.log(
     `New Umee Token deployed at ${umeeToken.address} with old umee at ${gravityBridgeUmee.address}`

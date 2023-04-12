@@ -192,6 +192,23 @@ function increaseAllowance(address spender, uint256 addedValue) external nonpaya
 |---|---|---|
 | _0 | bool | undefined |
 
+### maxSupply
+
+```solidity
+function maxSupply() external view returns (uint256)
+```
+
+
+
+
+
+
+#### Returns
+
+| Name | Type | Description |
+|---|---|---|
+| _0 | uint256 | undefined |
+
 ### name
 
 ```solidity
@@ -286,10 +303,10 @@ function symbol() external view returns (string)
 |---|---|---|
 | _0 | string | undefined |
 
-### tokensSwapped
+### tokensMinted
 
 ```solidity
-function tokensSwapped() external view returns (uint256)
+function tokensMinted() external view returns (uint256)
 ```
 
 
@@ -432,6 +449,17 @@ event Transfer(address indexed from, address indexed to, uint256 value)
 
 ```solidity
 error InvalidAmount()
+```
+
+
+
+*Custom error thrown when the provided amount is less then zero.*
+
+
+### MaxSupplyReached
+
+```solidity
+error MaxSupplyReached()
 ```
 
 

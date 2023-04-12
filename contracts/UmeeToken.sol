@@ -12,10 +12,16 @@ import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
  */
 error InvalidAmount();
 
+/**
+ * @dev Custom error thrown when the provided amount is less then zero.
+ */
+error MaxSupplyReached();
+
 contract Umee is ERC20Permit, ReentrancyGuard {
     address public deadAddress = 0x000000000000000000000000000000000000dEaD;
     address public gravityBridgeUmee;
-    uint256 public tokensSwapped = 0;
+    uint256 public tokensMinted = 0;
+    uint256 public maxSupply;
 
     /**
      * @dev Emitted when a Gravity Bridge token swap occurs.
@@ -29,9 +35,11 @@ contract Umee is ERC20Permit, ReentrancyGuard {
      * @param _gravityBridgeUmee The address of the Gravity Bridge Umee token contract.
      */
     constructor(
-        address _gravityBridgeUmee
+        address _gravityBridgeUmee,
+        uint256 _maxSupply
     ) ERC20Permit("UMEE") ERC20("UMEE", "UMEE") {
         gravityBridgeUmee = _gravityBridgeUmee;
+        maxSupply = _maxSupply;
     }
 
     /**
@@ -40,10 +48,11 @@ contract Umee is ERC20Permit, ReentrancyGuard {
      */
     function swapGB(uint256 amount) public nonReentrant {
         if (amount == 0) revert InvalidAmount();
+        if (tokensMinted + amount > maxSupply) revert MaxSupplyReached();
 
         ERC20(gravityBridgeUmee).transferFrom(msg.sender, deadAddress, amount);
 
-        tokensSwapped += amount;
+        tokensMinted += amount;
 
         _mint(msg.sender, amount);
         emit SwapGB(msg.sender, amount);

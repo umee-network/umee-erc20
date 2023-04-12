@@ -14,7 +14,10 @@ describe("Test Burn", function () {
     //old umee mainnet: 0xc0a4df35568f116c370e6a6a6022ceb908eeddac
 
     const UmeeToken = await ethers.getContractFactory("Umee");
-    const umeeToken = await UmeeToken.deploy(gravityBridgeUmee.address);
+    const umeeToken = await UmeeToken.deploy(
+      gravityBridgeUmee.address,
+      parseUnits("1000", 6)
+    );
 
     const decimal = 6;
     const deadAddress = await umeeToken.deadAddress();
@@ -163,9 +166,9 @@ describe("Test Burn", function () {
       );
       await approve.wait();
 
-      await expect(umeeToken.swapGB("50"))
+      await expect(umeeToken.swapGB(parseUnits("50", decimal)))
         .to.emit(umeeToken, "SwapGB")
-        .withArgs(owner.address, "50"); // We accept any value as `when` arg
+        .withArgs(owner.address, parseUnits("50", decimal)); // We accept any value as `when` arg
     });
   });
 
@@ -177,6 +180,21 @@ describe("Test Burn", function () {
         umeeToken,
         `InvalidAmount`
       );
+    });
+
+    it("Should revert if over the max total supply", async function () {
+      const { umeeToken, gravityBridgeUmee, owner, decimal } =
+        await loadFixture(deployTestFixture);
+
+      const approve = await gravityBridgeUmee.approve(
+        umeeToken.address,
+        parseUnits("5000", decimal)
+      );
+      await approve.wait();
+
+      await expect(
+        umeeToken.swapGB(parseUnits("5000", decimal))
+      ).to.be.revertedWithCustomError(umeeToken, `MaxSupplyReached`); // We accept any value as `when` arg
     });
 
     it("should revert if sender has insufficient balance", async function () {
