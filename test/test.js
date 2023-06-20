@@ -170,5 +170,17 @@ describe("Test Burn", function () {
         `InvalidAmount`
       );
     });
+
+    it("should allow owner to emergency withdraw", async function () {
+      const withdraw = await umeeMigrator.emergencyWithdraw();
+      await withdraw.wait();
+
+      expect(await umeeAxlarToken.balanceOf(owner.address)).to.equal(
+        parseUnits("999900", decimal)
+      );
+      expect(await umeeAxlarToken.balanceOf(umeeMigrator.address)).to.equal(
+        parseUnits("0", decimal)
+      );
+    });
   });
 });

@@ -6,7 +6,7 @@ import "@openzeppelin/contracts/token/ERC20/extensions/draft-ERC20Permit.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
-import "@openzeppelin/contracts/access/ownable.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
 
 /**
  * @dev Custom error thrown when the provided amount is less then zero.
@@ -30,6 +30,8 @@ contract UmeeTokenMigrator is ReentrancyGuard, Ownable {
      * @param amount The amount of tokens swapped.
      */
     event SwapGB(address indexed user, uint256 amount);
+
+    event EmergencyWithdraw(address indexed owner, uint256 amount);
 
     /**
      * @dev Initializes the contract with the provided parameters.
@@ -56,8 +58,10 @@ contract UmeeTokenMigrator is ReentrancyGuard, Ownable {
         emit SwapGB(msg.sender, amount);
     }
 
-    function EmergencyWithdraw() external nonReentrant onlyOwner {
+    function emergencyWithdraw() external nonReentrant onlyOwner {
         uint256 balance = ERC20(axelarToken).balanceOf(address(this));
         ERC20(axelarToken).transfer(msg.sender, balance);
+
+        emit EmergencyWithdraw(msg.sender, balance);
     }
 }
