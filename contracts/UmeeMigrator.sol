@@ -17,11 +17,11 @@ error InvalidAmount();
  */
 error MaxSupplyReached();
 
-contract Umee is ERC20Permit, ReentrancyGuard {
+contract UmeeTokenMigrator is ReentrancyGuard {
     address public deadAddress = 0x000000000000000000000000000000000000dEaD;
     address public gravityBridgeUmee;
-    uint256 public tokensMinted = 0;
-    uint256 public maxSupply;
+    address public axelarToken;
+    uint256 public tokensTransfered = 0;
 
     /**
      * @dev Emitted when a Gravity Bridge token swap occurs.
@@ -34,12 +34,9 @@ contract Umee is ERC20Permit, ReentrancyGuard {
      * @dev Initializes the contract with the provided parameters.
      * @param _gravityBridgeUmee The address of the Gravity Bridge Umee token contract.
      */
-    constructor(
-        address _gravityBridgeUmee,
-        uint256 _maxSupply
-    ) ERC20Permit("UMEE") ERC20("UMEE", "UMEE") {
+    constructor(address _gravityBridgeUmee, address _axelarToken) {
         gravityBridgeUmee = _gravityBridgeUmee;
-        maxSupply = _maxSupply;
+        axelarToken = _axelarToken;
     }
 
     /**
@@ -48,30 +45,13 @@ contract Umee is ERC20Permit, ReentrancyGuard {
      */
     function swapGB(uint256 amount) public nonReentrant {
         if (amount == 0) revert InvalidAmount();
-        if (tokensMinted + amount > maxSupply) revert MaxSupplyReached();
 
         ERC20(gravityBridgeUmee).transferFrom(msg.sender, deadAddress, amount);
 
-        tokensMinted += amount;
+        tokensTransfered += amount;
 
-        _mint(msg.sender, amount);
+        ERC20(axelarToken).transfer(msg.sender, amount);
+
         emit SwapGB(msg.sender, amount);
-    }
-
-    /**
-     * @dev Returns the number of decimals used to get its user representation.
-     * For example, if `decimals` equals `2`, a balance of `505` tokens should
-     * be displayed to a user as `5.05` (`505 / 10 ** 2`).
-     *
-     * Tokens usually opt for a value of 18, imitating the relationship between
-     * Ether and Wei. This is the value {ERC20} uses, unless this function is
-     * overridden;
-     *
-     * NOTE: This information is only used for _display_ purposes: it in
-     * no way affects any of the arithmetic of the contract, including
-     * {IERC20-balanceOf} and {IERC20-transfer}.
-     */
-    function decimals() public view virtual override returns (uint8) {
-        return 6;
     }
 }
