@@ -1,11 +1,10 @@
-import { HardhatUserConfig } from "hardhat/config";
-import "@nomicfoundation/hardhat-toolbox";
-import "hardhat-contract-sizer";
-import "@primitivefi/hardhat-dodoc";
-import * as dotenv from "dotenv";
-dotenv.config();
+require("solidity-coverage");
+require("@nomicfoundation/hardhat-toolbox");
+require("dotenv").config();
+require("hardhat-contract-sizer");
+require("@primitivefi/hardhat-dodoc");
 
-const config: HardhatUserConfig = {
+module.exports = {
   defaultNetwork: "hardhat",
 
   solidity: {
@@ -64,5 +63,3 @@ const config: HardhatUserConfig = {
     strict: true,
   },
 };
-
-export default config;
