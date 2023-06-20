@@ -6,6 +6,7 @@ import "@openzeppelin/contracts/token/ERC20/extensions/draft-ERC20Permit.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+import "@openzeppelin/contracts/access/ownable.sol";
 
 /**
  * @dev Custom error thrown when the provided amount is less then zero.
@@ -17,7 +18,7 @@ error InvalidAmount();
  */
 error MaxSupplyReached();
 
-contract UmeeTokenMigrator is ReentrancyGuard {
+contract UmeeTokenMigrator is ReentrancyGuard, Ownable {
     address public deadAddress = 0x000000000000000000000000000000000000dEaD;
     address public gravityBridgeUmee;
     address public axelarToken;
@@ -43,7 +44,7 @@ contract UmeeTokenMigrator is ReentrancyGuard {
      * @dev Swaps Deprecated Gravity Bridge UMEE for the new, axelar supported UMEE tokens.
      * @param amount The amount of UMEE tokens to be swapped.
      */
-    function swapGB(uint256 amount) public nonReentrant {
+    function swapGB(uint256 amount) external nonReentrant {
         if (amount == 0) revert InvalidAmount();
 
         ERC20(gravityBridgeUmee).transferFrom(msg.sender, deadAddress, amount);
@@ -53,5 +54,10 @@ contract UmeeTokenMigrator is ReentrancyGuard {
         ERC20(axelarToken).transfer(msg.sender, amount);
 
         emit SwapGB(msg.sender, amount);
+    }
+
+    function EmergencyWithdraw() external nonReentrant onlyOwner {
+        uint256 balance = ERC20(axelarToken).balanceOf(address(this));
+        ERC20(axelarToken).transfer(msg.sender, balance);
     }
 }
