@@ -7,6 +7,8 @@ import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/utils/Address.sol";
+import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
 /**
  * @dev Custom error thrown when the provided amount is less then zero.
@@ -19,6 +21,9 @@ error InvalidAmount();
 error MaxSupplyReached();
 
 contract UmeeTokenMigrator is ReentrancyGuard, Ownable {
+    using Address for *;
+    using SafeERC20 for ERC20;
+
     address public deadAddress = 0x000000000000000000000000000000000000dEaD;
     address public gravityBridgeUmee;
     address public axelarToken;
@@ -49,18 +54,22 @@ contract UmeeTokenMigrator is ReentrancyGuard, Ownable {
     function swapGB(uint256 amount) external nonReentrant {
         if (amount == 0) revert InvalidAmount();
 
-        ERC20(gravityBridgeUmee).transferFrom(msg.sender, deadAddress, amount);
+        ERC20(gravityBridgeUmee).safeTransferFrom(
+            msg.sender,
+            deadAddress,
+            amount
+        );
 
         tokensTransfered += amount;
 
-        ERC20(axelarToken).transfer(msg.sender, amount);
+        ERC20(axelarToken).safeTransfer(msg.sender, amount);
 
         emit SwapGB(msg.sender, amount);
     }
 
     function emergencyWithdraw() external nonReentrant onlyOwner {
         uint256 balance = ERC20(axelarToken).balanceOf(address(this));
-        ERC20(axelarToken).transfer(msg.sender, balance);
+        ERC20(axelarToken).safeTransfer(msg.sender, balance);
 
         emit EmergencyWithdraw(msg.sender, balance);
     }
